@@ -1,0 +1,14 @@
+{
+    "name": "aiddroid/fastcgi-php",
+    "description": "FastCGI Server & Client by php language.",
+    "require-dev": {
+        "workerman/workerman": "^3.5"
+    },
+    "authors": [
+        {
+            "name": "Allen",
+            "email": "aiddroid@gmail.com"
+        }
+    ],
+    "require": {}
+}
