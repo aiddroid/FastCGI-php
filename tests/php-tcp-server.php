@@ -117,6 +117,6 @@ $host = '127.0.0.1';
 $port = '1234';
 
 // 客户端来的任何请求都会打印到屏幕上
-echo "Raw Server started!" . PHP_EOL;
+echo "PHP TCP Server started!" . PHP_EOL;
 receive_tcp_message($host, $port);
 // 如果程序没有出现异常，该进程会一直存在

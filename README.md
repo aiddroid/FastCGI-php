@@ -27,7 +27,8 @@ download FastCGI-php and run a FastCGI server:
 git clone https://github.com/aiddroid/FastCGI-php.git
 cd FastCGI-php
 composer install --dev
-php tests/server.php start
+php tests/workerman-tcp-server.php start
+# OR # php tests/php-tcp-server.php
 ```
 
 now, you will see some information below:
