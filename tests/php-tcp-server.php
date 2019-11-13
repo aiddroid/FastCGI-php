@@ -56,8 +56,7 @@ function receive_tcp_message($host, $port)
             continue;
         }
 
-        // 读取请求数据
-        // 例如是 http 报文, 则解析 http 报文
+        // 读取请求数据, 后续可对数据进行解析
         $data = '';
         do {
             $buffer = @socket_read($child, 1024, PHP_BINARY_READ);
@@ -70,13 +69,14 @@ function receive_tcp_message($host, $port)
 
         var_dump($remote_host, $remote_port, $data);
 
+        // 把数据解析为FastCGI请求
         list($header, $params, $inputData) = FastCGIServer::parseRequest($data);
         var_dump($header, $params, $inputData);
 
-        // 此处省略如何调用 $callback
+        // 对FastCGI请求进行相应, 并发送回客户端
         $response = responseFastCGI($header, $params, $inputData);
 
-        // 因为是 TCP 链接, 需要返回给客户端处理数据
+        // 通过 TCP 链接, 返回数据给客户端
         $num = 0;
         $length = strlen($response);
         do {
@@ -119,4 +119,5 @@ $port = '1234';
 // 客户端来的任何请求都会打印到屏幕上
 echo "PHP TCP Server started!" . PHP_EOL;
 receive_tcp_message($host, $port);
+
 // 如果程序没有出现异常，该进程会一直存在
