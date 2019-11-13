@@ -25,6 +25,10 @@
 
 namespace aiddroid\FastCGI\Records;
 
+/**
+ * Class EndRequest
+ * @package aiddroid\FastCGI\Records
+ */
 class EndRequest{
     protected $appStatus;
     protected $protocolStatus;

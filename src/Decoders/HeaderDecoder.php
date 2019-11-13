@@ -29,11 +29,19 @@ namespace aiddroid\FastCGI\Decoders;
 use aiddroid\FastCGI\FastCGIServer;
 use aiddroid\FastCGI\Records\Header;
 
+/**
+ * Class HeaderDecoder
+ * @package aiddroid\FastCGI\Decoders
+ */
 class HeaderDecoder
 {
 
-    public static function decode($data)
-    {
+    /**
+     * @param $data
+     * @return Header
+     * @throws \Exception
+     */
+    public static function decode($data) {
         if (strlen($data) !== FastCGIServer::HEADER_LENGTH) {
             throw new \Exception("Invalid FastCGI header length.");
         }

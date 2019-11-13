@@ -28,8 +28,16 @@ namespace aiddroid\FastCGI\Encoders;
 
 use aiddroid\FastCGI\Records\EndRequest;
 
+/**
+ * Class EndRequestEncoder
+ * @package aiddroid\FastCGI\Encoders
+ */
 class EndRequestEncoder
 {
+    /**
+     * @param EndRequest $endRequest
+     * @return string
+     */
     public static function encode(EndRequest $endRequest) {
         $reserved = $endRequest->getReserved();
         return pack("N", $endRequest->getAppStatus()) .

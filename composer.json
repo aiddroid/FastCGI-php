@@ -1,6 +1,9 @@
 {
     "name": "aiddroid/fastcgi-php",
     "description": "FastCGI Server & Client by php language.",
+    "require": {
+        "monolog/monolog": "^2.0"
+    },
     "require-dev": {
         "workerman/workerman": "^3.5"
     },
@@ -10,5 +13,9 @@
             "email": "aiddroid@gmail.com"
         }
     ],
-    "require": {}
+    "autoload-dev": {
+        "psr-4": {
+            "aiddroid\\FastCGI\\": "src/"
+        }
+    }
 }

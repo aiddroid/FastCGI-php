@@ -28,8 +28,16 @@ namespace aiddroid\FastCGI\Encoders;
 
 use aiddroid\FastCGI\Records\Header;
 
+/**
+ * Class HeaderEncoder
+ * @package aiddroid\FastCGI\Encoders
+ */
 class HeaderEncoder
 {
+    /**
+     * @param Header $header
+     * @return string
+     */
     public static function encode(Header $header){
 
         return chr($header->getVersion()) .

@@ -25,6 +25,10 @@
 
 namespace aiddroid\FastCGI\Records;
 
+/**
+ * Class BeginRequest
+ * @package aiddroid\FastCGI\Records
+ */
 class BeginRequest {
     protected $role;
     protected $flags;

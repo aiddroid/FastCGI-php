@@ -25,7 +25,10 @@
 
 namespace aiddroid\FastCGI\Constants;
 
-
+/**
+ * Class Definition
+ * @package aiddroid\FastCGI\Constants
+ */
 abstract class Definition
 {
     const VERSION_1 = 1;
@@ -40,7 +43,7 @@ abstract class Definition
     const TYPE_DATA = 8;
     const TYPE_GET_VALUES = 9;
     const TYPE_GET_VALUES_RESULT = 10;
-    const TYPE_UNKNOW = 11;
+    const TYPE_UNKNOWN = 11;
 
     const ROLE_RESPONDER = 1;
     const ROLE_AUTHORIZER = 2;

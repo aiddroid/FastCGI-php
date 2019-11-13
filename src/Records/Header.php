@@ -25,7 +25,10 @@
 
 namespace aiddroid\FastCGI\Records;
 
-
+/**
+ * Class Header
+ * @package aiddroid\FastCGI\Records
+ */
 class Header
 {
     protected $version;
