@@ -23,11 +23,17 @@
  * SOFTWARE.
  */
 
-$host = '127.0.0.1';
-$port = '1234';
-$callback = 'print';
+require __DIR__ . '/../vendor/autoload.php';
 
-function receive_tcp_message($host, $port, $callback)
+use aiddroid\FastCGI\FastCGIServer;
+
+/**
+ * 接收 TCP 消息
+ * @param $host
+ * @param $port
+ * @param $callback
+ */
+function receive_tcp_message($host, $port)
 {
     $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 
@@ -52,21 +58,23 @@ function receive_tcp_message($host, $port, $callback)
 
         // 读取请求数据
         // 例如是 http 报文, 则解析 http 报文
-        $request = '';
+        $data = '';
         do {
             $buffer = @socket_read($child, 1024, PHP_BINARY_READ);
             if (false === $buffer) {
                 @socket_close($child);
                 continue 2;
             }
-            $request .= $buffer;
+            $data .= $buffer;
         } while (strlen($buffer) == 1024);
 
-        var_dump($remote_host, $remote_port, $request);
+        var_dump($remote_host, $remote_port, $data);
+
+        list($header, $params, $inputData) = FastCGIServer::parseRequest($data);
+        var_dump($header, $params, $inputData);
 
         // 此处省略如何调用 $callback
-        $response = $callback($remote_host, $remote_port, $request);
-        $response = $response ? $response : 'NO RESPONSE!';
+        $response = responseFastCGI($header, $params, $inputData);
 
         // 因为是 TCP 链接, 需要返回给客户端处理数据
         $num = 0;
@@ -82,6 +90,33 @@ function receive_tcp_message($host, $port, $callback)
     }
 }
 
+/***
+ * 响应FastCGI 请求
+ * @param $header
+ * @param array $params
+ * @param null $inputData
+ * @return string
+ */
+function responseFastCGI($header, $params, $inputData = array()) {
+    // 构造响应数据
+    $requestId = $header->getRequestId();
+    $rawData = "Content-Type: text/raw\r\n\r\nhello";
+    $appStatus = 0;
+    $protocolStatus = 0;
+
+    return FastCGIServer::buildResponse(
+        $requestId,
+        $rawData,
+        $appStatus,
+        $protocolStatus
+    );
+}
+
+
+$host = '127.0.0.1';
+$port = '1234';
+
 // 客户端来的任何请求都会打印到屏幕上
-receive_tcp_message($host, $port, $callback);
+echo "Raw Server started!" . PHP_EOL;
+receive_tcp_message($host, $port);
 // 如果程序没有出现异常，该进程会一直存在

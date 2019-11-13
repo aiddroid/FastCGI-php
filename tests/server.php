@@ -43,14 +43,14 @@ $tcp_worker->onMessage = function ($connection, $data) {
 
     var_dump($header, $params, $inputData);
 
-    $response = [
+    $res = [
         'requestId' => $header->getRequestId(),
         'data' => "Content-Type: text/raw\r\n\r\nhello",
         'appStatus' => 0,
         'protocolStatus' => 0
 
     ];
-    $connection->send($response);
+    $connection->send($res);
     $connection->close();
 };
 
