@@ -33,7 +33,7 @@ php tests/workerman-tcp-server.php start
 
 now, you will see some information below:
 ```shell
-Workerman[tests/server.php] start in DEBUG mode
+Workerman[tests/workerman-tcp-server.php] start in DEBUG mode
 ----------------------------------------- WORKERMAN -----------------------------------------
 Workerman version:3.5.22          PHP version:7.3.11
 ------------------------------------------ WORKERS ------------------------------------------
