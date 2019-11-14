@@ -25,7 +25,10 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use aiddroid\FastCGI\Constants\FastCGI;
 use aiddroid\FastCGI\FastCGIServer;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 
 /**
  * 接收 TCP 消息
@@ -68,6 +71,11 @@ function receive_tcp_message($host, $port)
         } while (strlen($buffer) == 1024);
 
         var_dump($remote_host, $remote_port, $data);
+
+        // 开启日志
+        $logger = new Logger('FastCGI');
+        $logger->pushHandler(new StreamHandler('php://stdout'));
+        FastCGI::setLogger($logger);
 
         // 把数据解析为FastCGI请求
         list($header, $params, $inputData) = FastCGIServer::parseRequest($data);

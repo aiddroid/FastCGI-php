@@ -25,36 +25,15 @@
 
 namespace aiddroid\FastCGI;
 
-use aiddroid\FastCGI\Constants\Definition;
+use aiddroid\FastCGI\Constants\FastCGI;
 use aiddroid\FastCGI\Records\Header;
 use aiddroid\FastCGI\Decoders\HeaderDecoder;
 use aiddroid\FastCGI\Encoders\HeaderEncoder;
 use aiddroid\FastCGI\Records\EndRequest;
 use aiddroid\FastCGI\Encoders\EndRequestEncoder;
 use Monolog\Logger;
-use Psr\Log\LoggerInterface;
 
-class FastCGIServer extends Definition {
-
-    protected static $logger = false;
-
-    /**
-     *
-     * @param LoggerInterface $logger
-     */
-    public static function setLogger(LoggerInterface $logger) {
-        self::$logger = $logger;
-    }
-
-    /**
-     *
-     * @param $message
-     * @param $level
-     * @param array $context
-     */
-    public static function log($message, $level = Logger::DEBUG, $context = array()) {
-        self::$logger && self::$logger->log($level, $message, $context);
-    }
+class FastCGIServer extends FastCGI {
 
     /**
      * 构造二进制响应
@@ -71,10 +50,10 @@ class FastCGIServer extends Definition {
         $paddingLength = $contentLength % 8;
         $length = $contentLength + $paddingLength;
 
-        $stdoutBeginHeader = new Header(FastCGIServer::VERSION_1, FastCGIServer::TYPE_STDOUT, $requestId, $contentLength, $paddingLength, 1);
-        $stdoutEndHeader = new Header(FastCGIServer::VERSION_1, FastCGIServer::TYPE_STDOUT, $requestId, 0, 0, 1);
+        $stdoutBeginHeader = new Header(FastCGI::VERSION_1, FastCGI::TYPE_STDOUT, $requestId, $contentLength, $paddingLength, 1);
+        $stdoutEndHeader = new Header(FastCGI::VERSION_1, FastCGI::TYPE_STDOUT, $requestId, 0, 0, 1);
 
-        $endRequestHeader = new Header(FastCGIServer::VERSION_1, FastCGIServer::TYPE_END_REQUEST, $requestId, FastCGIServer::HEADER_LENGTH, 0, 1);
+        $endRequestHeader = new Header(FastCGI::VERSION_1, FastCGI::TYPE_END_REQUEST, $requestId, FastCGI::HEADER_LENGTH, 0, 1);
         $endRequest = new EndRequest($appStatus, $protocolStatus, '000');
 
         $binary = HeaderEncoder::encode($stdoutBeginHeader) .
@@ -93,17 +72,17 @@ class FastCGIServer extends Definition {
      */
     protected static function getTypeLabel($type) {
         $types = array(
-            FastCGIServer::TYPE_BEGIN_REQUEST => 'FCGI_TYPE_BEGIN_REQUEST',
-            FastCGIServer::TYPE_ABORT_REQUEST => 'FCGI_TYPE_ABORT_REQUEST',
-            FastCGIServer::TYPE_END_REQUEST => 'FCGI_TYPE_END_REQUEST',
-            FastCGIServer::TYPE_PARAMS => 'FCGI_TYPE_PARAMS',
-            FastCGIServer::TYPE_STDIN => 'FCGI_TYPE_STDIN',
-            FastCGIServer::TYPE_STDOUT => 'FCGI_TYPE_STDOUT',
-            FastCGIServer::TYPE_STDERR => 'FCGI_TYPE_STDERR',
-            FastCGIServer::TYPE_DATA => 'FCGI_TYPE_DATA',
-            FastCGIServer::TYPE_GET_VALUES => 'FCGI_TYPE_GET_VALUES',
-            FastCGIServer::TYPE_GET_VALUES_RESULT => 'FCGI_TYPE_GET_VALUES_RESULT',
-            FastCGIServer::TYPE_UNKNOWN => 'FCGI_TYPE_UNKNOWN'
+            FastCGI::TYPE_BEGIN_REQUEST => 'FCGI_TYPE_BEGIN_REQUEST',
+            FastCGI::TYPE_ABORT_REQUEST => 'FCGI_TYPE_ABORT_REQUEST',
+            FastCGI::TYPE_END_REQUEST => 'FCGI_TYPE_END_REQUEST',
+            FastCGI::TYPE_PARAMS => 'FCGI_TYPE_PARAMS',
+            FastCGI::TYPE_STDIN => 'FCGI_TYPE_STDIN',
+            FastCGI::TYPE_STDOUT => 'FCGI_TYPE_STDOUT',
+            FastCGI::TYPE_STDERR => 'FCGI_TYPE_STDERR',
+            FastCGI::TYPE_DATA => 'FCGI_TYPE_DATA',
+            FastCGI::TYPE_GET_VALUES => 'FCGI_TYPE_GET_VALUES',
+            FastCGI::TYPE_GET_VALUES_RESULT => 'FCGI_TYPE_GET_VALUES_RESULT',
+            FastCGI::TYPE_UNKNOWN => 'FCGI_TYPE_UNKNOWN'
         );
 
         return isset($types[$type]) ? $types[$type] : false;
@@ -156,13 +135,13 @@ class FastCGIServer extends Definition {
         $params = array();
         $input = $header = null;
 
-        while($start <= $maxLength - FastCGIServer::HEADER_LENGTH) {
+        while($start <= $maxLength - FastCGI::HEADER_LENGTH) {
             // 读取头信息(8个字节),用于判断紧接着的数据类型和长度
-            $headerData = substr($data, $start, FastCGIServer::HEADER_LENGTH);
+            $headerData = substr($data, $start, FastCGI::HEADER_LENGTH);
             $header = HeaderDecoder::decode($headerData);
 
             $messageLength = $header->getContentLength() + $header->getPaddingLength();
-            $message = substr($data, $start + FastCGIServer::HEADER_LENGTH, $messageLength);
+            $message = substr($data, $start + FastCGI::HEADER_LENGTH, $messageLength);
 
             self::log("==== HEADER INFO ===", Logger::INFO);
             self::log("Header Data: " . bin2hex($headerData));
@@ -177,7 +156,7 @@ class FastCGIServer extends Definition {
 
             switch ($header->getType()) {
                 // 如果紧接着的数据是BeginRequestBody, 也是8个字节
-                case FastCGIServer::TYPE_BEGIN_REQUEST :
+                case FastCGI::TYPE_BEGIN_REQUEST :
                     $role = unpack('n', $message[0] . $message[1]);
                     $role = $role[1];
                     $flags = ord($message[2]);
@@ -190,14 +169,14 @@ class FastCGIServer extends Definition {
 
                     break;
                 // 如果紧接着的数据是PARAMS, 则进行解析
-                case FastCGIServer::TYPE_PARAMS :
+                case FastCGI::TYPE_PARAMS :
                     $ps = self::readParams($message);
                     if ($ps) {
                         $params += $ps;
                     }
                     break;
                 // 如果紧接着的数据是STDIN, 则进行读取
-                case FastCGIServer::TYPE_STDIN :
+                case FastCGI::TYPE_STDIN :
                     if ($message) {
                         $input .= $message;
                     }
@@ -208,7 +187,7 @@ class FastCGIServer extends Definition {
 
             self::log(PHP_EOL . PHP_EOL);
 
-            $start += $messageLength + FastCGIServer::HEADER_LENGTH;
+            $start += $messageLength + FastCGI::HEADER_LENGTH;
         }
 
         return array($header, $params, $input);

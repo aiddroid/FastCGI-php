@@ -45,7 +45,7 @@ $tcp_worker->onMessage = function ($connection, $data) {
 
     $res = [
         'requestId' => $header->getRequestId(),
-        'data' => "Content-Type: text/raw\r\n\r\nhello",
+        'data' => "Content-Type: text/raw\r\n\r\n" . print_r($params, true),
         'appStatus' => 0,
         'protocolStatus' => 0
 

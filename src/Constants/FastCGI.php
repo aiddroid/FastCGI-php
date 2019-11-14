@@ -25,11 +25,14 @@
 
 namespace aiddroid\FastCGI\Constants;
 
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
+
 /**
  * Class Definition
  * @package aiddroid\FastCGI\Constants
  */
-abstract class Definition
+class FastCGI
 {
     const VERSION_1 = 1;
 
@@ -55,4 +58,24 @@ abstract class Definition
     const PROTCOL_STATUS_UNKNOWN_ROLE = 3;
     
     const HEADER_LENGTH = 8;
+
+    protected static $logger = false;
+
+    /**
+     *
+     * @param LoggerInterface $logger
+     */
+    public static function setLogger(LoggerInterface $logger) {
+        self::$logger = $logger;
+    }
+
+    /**
+     *
+     * @param $message
+     * @param $level
+     * @param array $context
+     */
+    public static function log($message, $level = Logger::DEBUG, $context = array()) {
+        self::$logger && self::$logger->log($level, $message, $context);
+    }
 }

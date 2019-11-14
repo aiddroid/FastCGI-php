@@ -26,7 +26,7 @@
 namespace aiddroid\FastCGI\Decoders;
 
 
-use aiddroid\FastCGI\FastCGIServer;
+use aiddroid\FastCGI\Constants\FastCGI;
 use aiddroid\FastCGI\Records\Header;
 
 /**
@@ -42,7 +42,7 @@ class HeaderDecoder
      * @throws \Exception
      */
     public static function decode($data) {
-        if (strlen($data) !== FastCGIServer::HEADER_LENGTH) {
+        if (strlen($data) !== FastCGI::HEADER_LENGTH) {
             throw new \Exception("Invalid FastCGI header length.");
         }
 
@@ -55,7 +55,7 @@ class HeaderDecoder
         $paddingLength = ord($data[6]);
         $reserved = ord($data[7]);
 
-        if ($version !== FastCGIServer::VERSION_1) {
+        if ($version !== FastCGI::VERSION_1) {
             throw new \Exception("Unsupported FastCGI version.");
         }
 

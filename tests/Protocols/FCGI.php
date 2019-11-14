@@ -25,8 +25,8 @@
 
 namespace Workerman\Protocols;
 
+use aiddroid\FastCGI\Constants\FastCGI;
 use aiddroid\FastCGI\FastCGIServer;
-use Monolog\Handler\PHPConsoleHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Workerman\Connection\ConnectionInterface;
@@ -58,10 +58,12 @@ class FCGI implements ProtocolInterface
      */
     public static function decode($recv_buffer, ConnectionInterface $connection)
     {
+        // 开启日志
         $logger = new Logger('FastCGI');
         $logger->pushHandler(new StreamHandler('php://stdout'));
-        FastCGIServer::setLogger($logger);
+        FastCGI::setLogger($logger);
 
+        // 解析FastCGI请求
         $data = FastCGIServer::parseRequest($recv_buffer);
         return $data;
     }
